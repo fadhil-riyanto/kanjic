@@ -101,7 +101,8 @@ size_t strlen_teks(const char *str)
 
 void execcurl(kanji_s *ks)
 {
-        char escape_kanji[1024];
+        char *escape_kanji;
+        escape_kanji = (char*)malloc(sizeof(char) * 1024);
         char url[1024];
         CURL *ch = ks->ch;
         CURLcode response;
@@ -125,6 +126,7 @@ void execcurl(kanji_s *ks)
         snprintf(url, sizeof(url), "%s%s", "https://jisho.org/api/v1/search/words?keyword=", escape_kanji);
         // printf("%s", url);
         // return 0;
+        free(escape_kanji);
         
 
         curl_easy_setopt(ch, CURLOPT_URL, url);
