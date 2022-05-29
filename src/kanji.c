@@ -123,19 +123,19 @@ void execcurl(kanji_s *ks)
         //memcpy(url, "https://jisho.org/api/v1/search/words?keyword=", 46);
         urlencode(escape_kanji, ks->kanji, strlen(ks->kanji), false);
         snprintf(url, sizeof(url), "%s%s", "https://jisho.org/api/v1/search/words?keyword=", escape_kanji);
-        printf("%s", url);
-        return 0;
+        // printf("%s", url);
+        // return 0;
         
 
         curl_easy_setopt(ch, CURLOPT_URL, url);
         curl_easy_setopt(ch, CURLOPT_WRITEFUNCTION, write_curl_callback);
         curl_easy_setopt(ch, CURLOPT_WRITEDATA, ks);
         response = curl_easy_perform(ch);
-        if(response != CURLE_OK){ 
-                printf("curl error"); 
-        }else{
-                printf("data: %s\n", ks->data);
-        }
+        // if(response != CURLE_OK){ 
+        //         printf("curl error"); 
+        // }else{
+        //         printf("data: %s\n", ks->data);
+        // }
         curl_easy_cleanup(ch);
         curl_global_cleanup();
 }
@@ -148,7 +148,40 @@ void destroy_all(kanji_s* ks)
 
 void parse_and_show(kanji_s* ks)
 {
-    json_object *root_json_jisho = (json_object*)malloc(sizeof(json_tokener_parse(ks->data)));
+        int jsonlen_japanese;
+        json_object *root_json_jisho = (json_object*)malloc(sizeof(json_tokener_parse(ks->data)));
+        root_json_jisho = json_tokener_parse(ks->data);
+        json_object *data = json_object_object_get(root_json_jisho, "data");
+        json_object *data_root = json_object_array_get_idx(data, 0);
+
+        printf("\n\n===============\n");
+        data = json_object_object_get(data_root, "slug");
+        printf("Kanji : %s\n", json_object_get_string(data));
+        
+        json_object *jp = json_object_object_get(data_root, "japanese");
+        jsonlen_japanese = json_object_array_length(jp);
+        for (int i = 0; i < jsonlen_japanese; i++) {
+            json_object *japanese_hiragana_read = json_object_array_get_idx(jp, i);
+            json_object *reading = json_object_object_get(japanese_hiragana_read, "reading");
+            json_object *word = json_object_object_get(japanese_hiragana_read, "word");
+            printf("~ (%s) : %s\n", json_object_get_string(word), json_object_get_string(reading));
+        }
+
+        printf("\nmeaning: \n");
+        jp = json_object_object_get(data_root, "senses");
+        jsonlen_japanese = json_object_array_length(jp);
+        for (int i = 0; i < jsonlen_japanese; i++) {
+            json_object *senses = json_object_array_get_idx(jp, i);
+            json_object *def = json_object_object_get(senses, "english_definitions");
+            printf("~ %s\n", json_object_get_string(def));
+        }
+
+
+        // data = json_object_object_get(data_root, "japanese");
+        // data = json_object_array_get_idx(data, 0);
+        // data = json_object_object_get(data, "reading");
+        // printf("Hiragana : %s\n", json_object_get_string(data));
+
 
 }
 

@@ -17,10 +17,6 @@ typedef struct _kanji_t {
         size_t              size;
 } kanji_s;
 
-typedef struct parsed_data_t {
-
-} parsed_data;
-
 kanji_s* init(char*  argv[]);
 void execcurl(kanji_s *ks);
 void destroy_all(kanji_s* ks);
