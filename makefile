@@ -3,7 +3,7 @@ LD	:= $(CC)
 CFLAGS	:= -Wall
 LDLIB	:= -lcurl -ljson-c
 
-export LD_LIBRARY_PATH=$(PWD)
+export LD_LIBRARY_PATH=$(pwd)
 run: src/main.c libkanji.so
 	clear
 	$(CC) $(CFLAGS) $(^) -o $(@)
