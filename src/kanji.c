@@ -175,6 +175,7 @@ void parse_and_show(kanji_s* ks)
             json_object *def = json_object_object_get(senses, "english_definitions");
             printf("~ %s\n", json_object_get_string(def));
         }
+        free(root_json_jisho);
 
 
         // data = json_object_object_get(data_root, "japanese");
